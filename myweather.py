@@ -3,9 +3,9 @@
 import click
 import requests
 
-SAMPLE_API_KEY = '2992a6f5340ee0ba7bd8e4e0ea4f62ad'
+API_KEY = '2992a6f5340ee0ba7bd8e4e0ea4f62ad'
 
-def current_weather(location, api_key=SAMPLE_API_KEY):
+def current_weather(location, api_key=API_KEY):
     url = 'https://api.openweathermap.org/data/2.5/weather'
 
     query_params = {
@@ -25,6 +25,7 @@ def current_weather(location, api_key=SAMPLE_API_KEY):
     help='your API key for the OpenWeatherMap API',
     metavar='<your-api-id>'
 )
+
 def main(location, api_key):
     """
     A little weather tool that shows you the current weather in a LOCATION of

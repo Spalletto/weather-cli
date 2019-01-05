@@ -1,8 +1,9 @@
 #!/usr/local/lib python3.5
-import requests
+from os.path import exists, expanduser
+from re import match
+
 import click
-import os
-import re
+from requests import get
 
 API_KEY = '2992a6f5340ee0ba7bd8e4e0ea4f62ad'
 
@@ -10,7 +11,7 @@ class ApiKey(click.ParamType):
     name = 'api-key'
 
     def convert(self, value, param, ctx):
-        found = re.match(r'[0-9a-f]{32}', value)
+        found = match(r'[0-9a-f]{32}', value)
 
         if not found:
             self.fail(
@@ -30,7 +31,7 @@ def current_weather(location, api_key=API_KEY):
         'appid': api_key,
     }
 
-    response = requests.get(url, params=query_params)
+    response = get(url, params=query_params)
 
     return response.json()['weather'][0]['description']
 
@@ -59,9 +60,9 @@ def main(ctx, api_key, config_file):
     You need a valid API key from OpenWeatherMap for the tool to work. You can
     sign up for a free account at https://openweathermap.org/appid.
     """
-    filename = os.path.expanduser(config_file)
+    filename = expanduser(config_file)
 
-    if not api_key and os.path.exists(filename):
+    if not api_key and exists(filename):
         with open(filename) as cfg:
             api_key = cfg.read()
 

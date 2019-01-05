@@ -8,6 +8,7 @@ from requests import get
 API_KEY = '2992a6f5340ee0ba7bd8e4e0ea4f62ad'
 
 class ApiKey(click.ParamType):
+    # class which determine as data type hexadecimal numbers in click
     name = 'api-key'
 
     def convert(self, value, param, ctx):
@@ -24,6 +25,7 @@ class ApiKey(click.ParamType):
 
 
 def current_weather(location, api_key=API_KEY):
+    # get current weather from openweathermap site
     url = 'https://api.openweathermap.org/data/2.5/weather'
 
     query_params = {
@@ -60,6 +62,8 @@ def main(ctx, api_key, config_file):
     You need a valid API key from OpenWeatherMap for the tool to work. You can
     sign up for a free account at https://openweathermap.org/appid.
     """
+
+    # creating context with api-key and config file
     filename = expanduser(config_file)
 
     if not api_key and exists(filename):

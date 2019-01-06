@@ -32,6 +32,7 @@ def current_weather(location, api_key=API_KEY):
 
     query_params = {
         'q': location,
+        'units': 'metric',
         'appid': api_key,
     }
 
@@ -39,7 +40,7 @@ def current_weather(location, api_key=API_KEY):
 
     weather = {
         'description' : response.json()['weather'][0]['description'],
-        'temperature' : round(k2c(response.json()['main']['temp']), 1),
+        'temperature' : response.json()['main']['temp'],
         'pressure' : response.json()['main']['pressure'],
         'humidity' : response.json()['main']['humidity'],
         'wind' : response.json()['wind'],

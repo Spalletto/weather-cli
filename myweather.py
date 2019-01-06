@@ -1,9 +1,11 @@
-#!/usr/local/lib python3.5
 from os.path import exists, expanduser
 from re import match
-
+from pytemperature import k2c
+from datetime import datetime, timezone
 import click
 from requests import get
+import pytz
+import tzlocal
 
 API_KEY = '2992a6f5340ee0ba7bd8e4e0ea4f62ad'
 
@@ -35,7 +37,17 @@ def current_weather(location, api_key=API_KEY):
 
     response = get(url, params=query_params)
 
-    return response.json()['weather'][0]['description']
+    weather = {
+        'description' : response.json()['weather'][0]['description'],
+        'temperature' : round(k2c(response.json()['main']['temp']), 1),
+        'pressure' : response.json()['main']['pressure'],
+        'humidity' : response.json()['main']['humidity'],
+        'wind' : response.json()['wind'],
+        'sunrise' : response.json()['sys']['sunrise'],
+        'sunset' : response.json()['sys']['sunset'],
+    }
+
+    return weather
 
 @click.group()
 @click.option(
@@ -101,7 +113,15 @@ def current(ctx, location):
     api_key = ctx.obj['api_key']
 
     weather = current_weather(location, api_key)
-    print(f"The weather in {location} right now: {weather}.") 
+
+    click.secho(f"The weather in {location} right now: {weather.get('description')}.\n", fg='bright_green', bold=True) 
+    click.secho(f"Temperature:\t {weather.get('temperature')} °C", fg='green') 
+    click.secho(f"Pressure:\t {weather.get('pressure')} mm", fg='green') 
+    click.secho(f"Humidity:\t {weather.get('humidity')} %", fg='green') 
+    click.secho(f"Wind:\t\t {weather.get('wind')['deg']} deg, {weather.get('wind')['speed']} m/s", fg='green') 
+    click.secho(f"\nSunrise time:\t {datetime.utcfromtimestamp(weather.get('sunrise')).strftime('%H:%M:%S')} UTC", fg='green') 
+    click.secho(f"Sunset time:\t {datetime.utcfromtimestamp(weather.get('sunset')).strftime('%H:%M:%S')} UTC", fg='green') 
+    
 
 if __name__ == "__main__":
     main()
